@@ -23,17 +23,11 @@ fn extract_frontmatter_str(body: &str) -> Option<String> {
 	let frontmatter_matcher = Regex::new(FRONTMATTER_BODY_SPLIT_PTN).unwrap();
 	let has_frontmatter = frontmatter_matcher.is_match(&body);
 
-	if has_frontmatter {
-		super::log("Frontmatter recognised");
-	}
-	super::log(&body);
-
 	if !has_frontmatter {
 		return None;
 	}
 	let body_parts = frontmatter_matcher.captures(&body)?;
 	let frontmatter_str = body_parts.get(1)?.as_str();
-	super::log(&frontmatter_str);
 	Some(String::from(frontmatter_str))
 }
 

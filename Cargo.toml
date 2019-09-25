@@ -1,6 +1,6 @@
 [package]
-name = "md_codex_wasm"
-version = "0.1.0"
+name = "codex"
+version = "0.1.1"
 authors = ["Jason Howmans <jason@nosaj.io>"]
 edition = "2018"
 
@@ -28,4 +28,3 @@ console_error_panic_hook = "0.1.6"
 debug = true
 
 [profile.release]
-debug = true

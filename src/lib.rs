@@ -32,8 +32,6 @@ pub fn md_to_json(filename: &str, body: &str) -> String {
     // Init propper logging for panics
     console_error_panic_hook::set_once();
 
-    log(&body);
-
     // Prepare the regexp for matching valid filenames
     let filename_regex = Regex::new(&FILENAME_PTN).unwrap();
 

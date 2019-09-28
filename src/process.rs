@@ -78,14 +78,10 @@ pub fn md_to_html(md_string: &String) -> String {
 	html_str
 }
 
-pub fn posts_vec_to_json(posts: &Vec<super::Post>) -> String {
-	let mut json_str = String::new();
-	for p in posts {
-		let j = match to_string_pretty(p) {
-			Ok(s) => s,
-			_ => String::new(),
-		};
-		json_str = json_str + ",\n" + j.as_str();
-	}
-	String::from("[") + &json_str + "]"
+pub fn post_to_json(post: &super::Post) -> String {
+	let j = match to_string_pretty(post) {
+		Ok(s) => s,
+		_ => String::new(),
+	};
+	return j;
 }

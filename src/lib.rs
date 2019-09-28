@@ -36,7 +36,6 @@ pub fn md_to_json(filename: &str, body: &str) -> String {
     let filename_regex = Regex::new(&FILENAME_PTN).unwrap();
 
     // Process the files
-    let mut posts: Vec<Post> = Vec::new();
     let (slug, date) = match process::parse_filename(&filename, &filename_regex) {
         Some((slug, date)) => (slug, date),
         None => (String::from(""), String::from("")),
@@ -62,7 +61,8 @@ pub fn md_to_json(filename: &str, body: &str) -> String {
         None => String::from(""),
     };
 
-    posts.push(Post {
+
+    let json_str = process::post_to_json(&Post {
         title: title,
         metadata,
         slug,
@@ -70,8 +70,6 @@ pub fn md_to_json(filename: &str, body: &str) -> String {
         html,
         plain,
     });
-
-    let json_str = process::posts_vec_to_json(&posts);
     return json_str;
 }
 

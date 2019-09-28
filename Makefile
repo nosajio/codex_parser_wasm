@@ -5,3 +5,7 @@ out: clean
 clean:
 	@echo "🗑  Cleaning up...";
 	rm -rf ./pkg;
+
+publish:
+	@echo "⬆️  Publishing to NPM...";
+	cd ./pkg && npm pack && npm publish;

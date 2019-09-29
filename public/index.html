@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Codex web</title>
+
+  <style type="text/css">
+    :root {
+      --color-border: #123123;
+      --text-size: 20px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font: var(--text-size) "PragmataPro Liga", sans-serif;
+      margin: 0;
+    }
+
+    .title-box {
+      width: 100%;
+      border: 1px solid var(--color-border);
+      font: var(--text-size) "PragmataPro Liga", sans-serif;
+      padding: 1rem;
+    }
+
+    .ui {
+      width: 900px;
+      margin: 50px auto;
+    }
+
+    .box {
+      padding: 1rem;
+      border: 1px solid var(--color-border);
+      border-top: none;
+    }
+
+    .browser {
+      border-radius: 5px;
+      border: 1px solid #000;
+      width: 900px;
+      margin: 0 auto;
+    }
+
+    #parsed {
+      background: #feefef;
+      padding: 1rem;
+    }
+
+    #url {
+      margin: 1rem;
+      border: 1px solid #000;
+      border-radius: 10px;
+      font-size: 16px;
+      padding: 0.25rem 0.5rem;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="ui">
+    <h1>Test the codex</h1>
+    <form action="#" id="codexForm">
+      <input class="title-box" id="titleField" type="text" placeholder="filename-and-date-2019-09-29.md" />
+      <div class="box" contenteditable="true" id="metaField">
+        title: Hello codex
+      </div>
+      <div class="box" contenteditable="true" id="bodyField">
+        Post content goes here
+      </div>
+      <button type="submit">Parse</button>
+    </form>
+  </div>
+
+  <div class="browser">
+    <div id="url"></div>
+    <div id="parsed"></div>
+  </div>
+
+  <script>
+    const $ = (...args) => document.getElementById(...args);
+    const now = new Date();
+    const [year, day, month] = [now.getFullYear(), now.getDate(), now.getMonth()+1];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const defaultFilename = `hello-codex-${year}-${String(month).length === 1 ? `0${month}` : month}-${String(day).length === 1 ? `0${day}` : day}.md`;
+    (async () => {
+      const $form = $('codexForm');
+      const $name = $('titleField');
+      const $meta = $('metaField');
+      const $body = $('bodyField');
+      const $parsed = $('parsed');
+      const $url = $('url');
+      $name.placeholder = $name.value = defaultFilename;
+
+      const mod = await import('/pkg/codex.js');
+      await mod.default();
+
+      $form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const bodyText = $body.innerText;
+        const metaText = $meta.innerText;
+        const nameText = $name.value;
+
+        if (!bodyText || !metaText || !nameText) {
+          console.log(bodyText, metaText, nameText);
+          throw new TypeError('All fields are required');
+        }
+
+        const parsableBody = `---\n${metaText}\n---\n\n${bodyText}`;
+        console.log(parsableBody);
+
+        const jsonStr = mod.md_to_json(nameText, parsableBody);
+        const json = JSON.parse(jsonStr)
+        const jsonDate = new Date(json.date);
+
+        // Display
+        $url.innerHTML = `https://nosaj.io/${json.slug}`;
+        $parsed.innerHTML = `<h1>${json.title}</h1><div>${jsonDate.getDate()} ${months[jsonDate.getMonth()]} ${jsonDate.getFullYear()}</div>${json.html}`;
+
+      });
+    })();
+
+  </script>
+</body>
+
+</html>

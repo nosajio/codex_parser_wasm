@@ -1,6 +1,6 @@
 [package]
 name = "codex"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Jason Howmans <jason@nosaj.io>"]
 edition = "2018"
 
@@ -8,6 +8,7 @@ edition = "2018"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+cfg-if = "0.1.2"
 wasm-bindgen = "0.2.50"
 web-sys = "0.3.27"
 # git2 = "0.10.1"

@@ -1,13 +1,35 @@
 extern crate console_error_panic_hook;
+extern crate cfg_if;
+extern crate wasm_bindgen;
+
 use wasm_bindgen::prelude::*;
 mod process;
 
+use cfg_if::cfg_if;
 use chrono::NaiveDate;
 use regex::Regex;
 use serde::Serialize;
 use std::collections::HashMap;
 
 const FILENAME_PTN: &str = r"([a-z0-9-]*)-(\d{4}-\d{2}-\d{2})?.md";
+
+cfg_if! {
+    // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
+    // allocator.
+    if #[cfg(feature = "wee_alloc")] {
+        extern crate wee_alloc;
+        #[global_allocator]
+        static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+    }
+}
+
+#[wasm_bindgen]
+extern "C" {
+    // Use `js_namespace` here to bind `console.log(..)` instead of just
+    // `log(..)`
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
 
 #[derive(Debug, Serialize)]
 pub struct Post {
@@ -17,14 +39,6 @@ pub struct Post {
     metadata: Option<HashMap<String, String>>,
     html: String,
     plain: String,
-}
-
-#[wasm_bindgen]
-extern "C" {
-    // Use `js_namespace` here to bind `console.log(..)` instead of just
-    // `log(..)`
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
 }
 
 #[wasm_bindgen]
